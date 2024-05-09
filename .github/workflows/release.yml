@@ -40,7 +40,7 @@ jobs:
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: hello-world.zip
+        artifacts: custom-user-title.zip
         token: ${{ secrets.GITHUB_TOKEN }}
         tag: ${{ env.NEW_VERSION }}
         name: Release ${{ env.NEW_VERSION }}
