@@ -1,0 +1,48 @@
+name: Plugin Release Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-release:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+
+    - name: Increment Version Number
+      run: |
+        # Bash script to increment minor version
+        FILE=custom-user-title.php
+        VERSION_LINE=$(grep -e 'Version:' $FILE)
+        CURRENT_VERSION=$(echo $VERSION_LINE | grep -oP '\d+\.\d+\.\d+')
+        IFS='.' read -ra VERSION <<< "$CURRENT_VERSION"
+        NEW_VERSION="${VERSION[0]}.$((VERSION[1]+1)).${VERSION[2]}"
+        sed -i "s/$CURRENT_VERSION/$NEW_VERSION/" $FILE
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add $FILE
+        git commit -m "Increment version number to $NEW_VERSION"
+        echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+    - name: Push Changes
+      run: |
+        git push origin main
+    - name: Zip Repo Contents
+      run: |
+        zip -r hello-world.zip . -x "*.git*" "*.gitattributes*" "*.github*" "*.gitignore*" "*.DS_Store*" "*.editorconfig*" "*.gitmodules*" "*.vscode*" "*.idea"
+    - name: Push Tag
+      run: |
+          git tag ${{ env.NEW_VERSION }}
+          git push origin ${{ env.NEW_VERSION }}
+    - name: Create Release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: hello-world.zip
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ env.NEW_VERSION }}
+        name: Release ${{ env.NEW_VERSION }}
+        body: |
+          Release ${{ env.NEW_VERSION }}
