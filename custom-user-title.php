@@ -2,7 +2,7 @@
 /*
 Plugin Name: Custom User Title
 Description: Adds a title field to user profiles accessible via REST API and GraphQL.
-Version: 1.0
+Version: 1.0.0
 Author: Mackenly Jones
 */
 
