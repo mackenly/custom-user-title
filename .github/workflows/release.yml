@@ -32,7 +32,7 @@ jobs:
         git push origin main
     - name: Zip Repo Contents
       run: |
-        zip -r hello-world.zip . -x "*.git*" "*.gitattributes*" "*.github*" "*.gitignore*" "*.DS_Store*" "*.editorconfig*" "*.gitmodules*" "*.vscode*" "*.idea"
+        zip -r custom-user-title.zip . -x "*.git*" "*.gitattributes*" "*.github*" "*.gitignore*" "*.DS_Store*" "*.editorconfig*" "*.gitmodules*" "*.vscode*" "*.idea"
     - name: Push Tag
       run: |
           git tag ${{ env.NEW_VERSION }}
